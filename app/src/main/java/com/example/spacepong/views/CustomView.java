@@ -16,10 +16,13 @@ import androidx.annotation.RequiresApi;
 
 import android.os.Handler;
 
+import java.util.Random;
+
 
 public class CustomView extends View {
 
     private static final String TAG = "CustomView";
+    private Random random = new Random();
 
     Rect slider = new Rect();
     Rect topbar = new Rect();
@@ -34,7 +37,7 @@ public class CustomView extends View {
     private int currX = width / 2;
     private int currY = height;
 
-    private float ballX = width / 2f;
+    private float ballX;
     private float ballY = height / 2f;
 
     private float speedX = 0F;
@@ -75,8 +78,9 @@ public class CustomView extends View {
         this.currX = currX;
     }
 
-    public void setCurrY(int currY) {
-        this.currY = currY;
+    public void setBallX() {
+        this.ballX = (float) random.doubles(50, 1030).findFirst().getAsDouble();
+        ;
     }
 
 
@@ -109,15 +113,15 @@ public class CustomView extends View {
 
         slider.left = currX + 160;
         slider.right = currX - 160;
-        slider.top = currY - 220;
-        slider.bottom = currY - 240;
+        slider.top = currY - 180;
+        slider.bottom = currY - 220;
 
         canvas.drawRect(slider, paint);
 
         topbar.left = 0;
         topbar.right = width;
         topbar.top = 200;
-        topbar.bottom = 190;
+        topbar.bottom = 180;
 
         canvas.drawRect(topbar, paint);
 
@@ -132,13 +136,17 @@ public class CustomView extends View {
             ballX += speedX;
             reCall();
         }
-        if(hitsSlider())
-        {
-            speedX *= -1.0;
-            ballX += speedX;
+        if (hitsSlider()) {
+
+            float rightDist = ballX - slider.right;
+            float centerDist = ballX - slider.centerX();
+
+            if (rightDist < centerDist) {
+                speedX *= -1.0;
+                ballX += speedX;
+            }
             speedY *= -1.0;
             ballY += speedY;
-            reCall();
         }
         if (ballY < 200) {
             speedY *= -1.0;
@@ -148,20 +156,18 @@ public class CustomView extends View {
             speedX *= -1.0;
             ballX += speedX;
         }
-        if (ballY > (height - 100)) {
+        if (ballY > (height - 180)) {
             ballY = height / 2;
             speedY = 0;
-            ballX = width / 2;
+            setBallX();
             speedX = 0;
             stopCall();
         }
     }
 
-    boolean hitsSlider()
-    {
-        if(ballX>slider.left && ballX<slider.right)
-        {
-            if(ballY==slider.top)
+    boolean hitsSlider() {
+        if (ballX < slider.left && ballX > slider.right) {
+            if (ballY >= height - 220)
                 return true;
             return false;
         }
@@ -169,23 +175,22 @@ public class CustomView extends View {
     }
 
     void reCall() {
-      countDownTimer = new CountDownTimer(time, 5) {
-          @Override
-          public void onTick(long millisUntilFinished) {
+        countDownTimer = new CountDownTimer(time, 5) {
+            @Override
+            public void onTick(long millisUntilFinished) {
 
-          }
+            }
 
-          @Override
-          public void onFinish() {
-              Log.d(TAG, "Called");
-              invalidate();
-              move();
-          }
-      }.start();
+            @Override
+            public void onFinish() {
+                Log.d(TAG, "Called");
+                invalidate();
+                move();
+            }
+        }.start();
     }
 
-    void stopCall()
-    {
+    void stopCall() {
         countDownTimer.cancel();
     }
 }

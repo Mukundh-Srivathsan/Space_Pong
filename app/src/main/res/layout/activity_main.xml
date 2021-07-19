@@ -9,14 +9,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></com.example.spacepong.views.CustomView>
 
-    <Button
-        android:id="@+id/button"
+    <TextView
+        android:id="@+id/scoreTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/audiowide"
+        android:text="SCORE :"
+        android:textAlignment="viewEnd"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/scoreNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="150dp"
-        android:layout_marginBottom="500dp"
-        android:text="START" />
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="80dp"
+        android:fontFamily="@font/audiowide"
+        android:text="00"
+        android:textAlignment="textEnd"
+        android:textColor="#F8F5F5"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="107dp"
+        android:fontFamily="@font/black_ops_one"
+        android:text="3"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="96sp" />
 
 </RelativeLayout>
