@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,8 @@ public class CustomView extends View {
 
     Paint paint = new Paint();
 
+    CountDownTimer countDownTimer;
+
     private int width = this.getResources().getDisplayMetrics().widthPixels;
     private int height = this.getResources().getDisplayMetrics().heightPixels;
 
@@ -36,6 +39,8 @@ public class CustomView extends View {
 
     private float speedX = 0F;
     private float speedY = 0F;
+
+    private long time = 10;
 
 
     public CustomView(Context context) {
@@ -112,13 +117,11 @@ public class CustomView extends View {
         topbar.left = 0;
         topbar.right = width;
         topbar.top = 200;
-        topbar.bottom = 170;
+        topbar.bottom = 190;
 
         canvas.drawRect(topbar, paint);
 
         canvas.drawCircle(ballX, ballY, 20, paint);
-
-        //move();
 
     }
 
@@ -127,30 +130,62 @@ public class CustomView extends View {
         if ((ballY < (height - 100) && ((ballY > 200)) && (ballX < width) && (ballX > 0))) {
             ballY += speedY;
             ballX += speedX;
-            Handler handler = new Handler();
-            handler.removeCallbacksAndMessages(call);
-            handler.postDelayed(call, 10);
+            reCall();
+        }
+        if(hitsSlider())
+        {
+            speedX *= -1.0;
+            ballX += speedX;
+            speedY *= -1.0;
+            ballY += speedY;
+            reCall();
         }
         if (ballY < 200) {
             speedY *= -1.0;
             ballY += speedY;
         }
-        if (ballX < 0 || ballX > width) {
+        if (ballX <= 0 || ballX >= width) {
             speedX *= -1.0;
             ballX += speedX;
         }
         if (ballY > (height - 100)) {
             ballY = height / 2;
             speedY = 0;
+            ballX = width / 2;
+            speedX = 0;
+            stopCall();
         }
     }
 
-    private Runnable call = new Runnable() {
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        public void run() {
-            Log.d(TAG, "Called");
-            invalidate();
-            move();
+    boolean hitsSlider()
+    {
+        if(ballX>slider.left && ballX<slider.right)
+        {
+            if(ballY==slider.top)
+                return true;
+            return false;
         }
-    };
+        return false;
+    }
+
+    void reCall() {
+      countDownTimer = new CountDownTimer(time, 5) {
+          @Override
+          public void onTick(long millisUntilFinished) {
+
+          }
+
+          @Override
+          public void onFinish() {
+              Log.d(TAG, "Called");
+              invalidate();
+              move();
+          }
+      }.start();
+    }
+
+    void stopCall()
+    {
+        countDownTimer.cancel();
+    }
 }

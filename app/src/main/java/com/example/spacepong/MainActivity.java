@@ -2,6 +2,7 @@ package com.example.spacepong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 customView.setSpeedY(-20F);
+                customView.setSpeedX(20F);
                 customView.move();
             }
         });
