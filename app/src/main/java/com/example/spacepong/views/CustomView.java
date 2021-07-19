@@ -5,16 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-
-import android.os.Handler;
 
 import java.util.Random;
 
@@ -31,11 +27,11 @@ public class CustomView extends View {
 
     CountDownTimer countDownTimer;
 
-    private int width = this.getResources().getDisplayMetrics().widthPixels;
-    private int height = this.getResources().getDisplayMetrics().heightPixels;
+    private final int  width = this.getResources().getDisplayMetrics().widthPixels;
+    private final int height = this.getResources().getDisplayMetrics().heightPixels;
 
     private int currX = width / 2;
-    private int currY = height;
+    private final int currY = height;
 
     private float ballX;
     private float ballY = height / 2f;
@@ -80,7 +76,6 @@ public class CustomView extends View {
 
     public void setBallX() {
         this.ballX = (float) random.doubles(50, 1030).findFirst().getAsDouble();
-        ;
     }
 
 
@@ -157,7 +152,7 @@ public class CustomView extends View {
             ballX += speedX;
         }
         if (ballY > (height - 180)) {
-            ballY = height / 2;
+            ballY = height / 2F;
             speedY = 0;
             setBallX();
             speedX = 0;
@@ -167,9 +162,7 @@ public class CustomView extends View {
 
     boolean hitsSlider() {
         if (ballX < slider.left && ballX > slider.right) {
-            if (ballY >= height - 220)
-                return true;
-            return false;
+            return ballY >= height - 220;
         }
         return false;
     }

@@ -2,23 +2,15 @@ package com.example.spacepong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.spacepong.views.CustomView;
-
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) millisUntilFinished / 1000;
-                timer.setText(""+seconds);
+                timer.setText((""+seconds));
             }
 
             @Override
