@@ -1,35 +1,36 @@
 package com.example.spacepong;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.spacepong.views.CustomView;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Random;
+import com.example.spacepong.views.CustomView;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    CustomView customView;
+    private MediaPlayer mediaPlayer;
+    private int score = 0;
+    private boolean isEasy = true;
 
-    FrameLayout rL;
-    TextView scoreTitle;
-    TextView scoreNo;
-    TextView timer;
+    private CustomView customView;
 
-    CountDownTimer starttimer;
+    private TextView scoreNo;
+    private TextView timer;
 
-    int score;
+    private CountDownTimer starttimer;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,20 +39,55 @@ public class MainActivity extends AppCompatActivity {
 
         score = 0;
 
-        rL = (FrameLayout) findViewById(R.id.layout);
-        scoreTitle = (TextView) findViewById(R.id.scoreTitle);
-        scoreNo = (TextView) findViewById(R.id.scoreNumber);
-        timer = (TextView) findViewById(R.id.timer);
+        FrameLayout rL = findViewById(R.id.layout);
+        TextView scoreTitle = findViewById(R.id.scoreTitle);
+        scoreNo = findViewById(R.id.scoreNumber);
+        timer = findViewById(R.id.timer);
 
         scoreTitle.setVisibility(View.VISIBLE);
         //scoreTitle.setText("SCORE : ");
         scoreNo.setVisibility(View.VISIBLE);
-        scoreNo.setText("00");
+        scoreNo.setText(("00"));
         timer.setVisibility(View.VISIBLE);
 
-        customView = new CustomView(this);
+        ScoreChange sc = new ScoreChange() {
+            @Override
+            public void setScore() {
+                score += 2;
+                scoreNo.setText(("" + score));
+            }
+
+            @Override
+            public void playSound(int action) {
+                if(mediaPlayer!=null) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+                mediaPlayer = null;
+
+                switch (action) {
+                    case 0:
+                        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.gameover);
+                        mediaPlayer.start();
+                        break;
+
+                    case 1:
+                        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.wallhit);
+                        mediaPlayer.start();
+                        break;
+
+                    case 2:
+                        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.sliderhit);
+                        mediaPlayer.start();
+                        break;
+                }
+            }
+        };
+
+        customView = new CustomView(this, sc);
 
         View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -61,24 +97,29 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         };
+
+        customView.setOnTouchListener(onTouchListener);
+
         customView.setBallX();
+
+        Intent intent = getIntent();
+
+        Bundle bundle = getIntent().getExtras();
+        isEasy = bundle.getBoolean("isEasy");
 
         startTimer();
 
-        customView.move();
-        customView.setOnTouchListener(onTouchListener);
-
+        if(isEasy)
+            customView.easyMove();
+        else
+            customView.moveHard();
 
         rL.addView(customView);
     }
 
-    public void setScore() {
-        score += 2;
-        scoreNo.setText(("" + score));
-    }
 
     void startTimer() {
-        starttimer = new CountDownTimer(3000, 1000) {
+        starttimer = new CountDownTimer(4000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) millisUntilFinished / 1000;
@@ -87,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+
                 customView.setSpeedY(20F);
 
                 double random = Math.random();
@@ -105,4 +147,5 @@ public class MainActivity extends AppCompatActivity {
     void stopTimer() {
         starttimer.cancel();
     }
+
 }

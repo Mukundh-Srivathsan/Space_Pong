@@ -7,12 +7,11 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.example.spacepong.MainActivity;
+import com.example.spacepong.ScoreChange;
 
 import java.util.Random;
 
@@ -20,17 +19,22 @@ import java.util.Random;
 public class CustomView extends View {
 
     private static final String TAG = "CustomView";
-    private Random random = new Random();
+    private final Random random = new Random();
 
     Rect slider = new Rect();
     Rect topbar = new Rect();
 
     Paint paint = new Paint();
 
-    CountDownTimer countDownTimer;
+    CountDownTimer easyTimer;
+    CountDownTimer hardTimer;
 
-    private final int width = this.getResources().getDisplayMetrics().widthPixels;
-    private final int height = this.getResources().getDisplayMetrics().heightPixels;
+    private final int width = this.getResources().
+            getDisplayMetrics().
+            widthPixels;
+    private final int height = this.getResources().
+            getDisplayMetrics()
+            .heightPixels;
 
     private int currX = width / 2;
     private final int currY = height;
@@ -41,13 +45,15 @@ public class CustomView extends View {
     private float speedX = 0F;
     private float speedY = 0F;
 
-    private long time = 10;
-    private int score = 0;
-    MainActivity mainActivity = new MainActivity();
+    private final long time = 10;
+    private int speedUp = 0;
 
+    ScoreChange sc;
 
-    public CustomView(Context context) {
+    public CustomView(Context context, ScoreChange sc) {
         super(context);
+
+        this.sc = sc;
 
         init(null);
     }
@@ -79,7 +85,9 @@ public class CustomView extends View {
     }
 
     public void setBallX() {
-        this.ballX = (float) random.doubles(50, 1030).findFirst().getAsDouble();
+        this.ballX = (float) random.doubles(50, 1030)
+                .findFirst()
+                .getAsDouble();
     }
 
 
@@ -98,22 +106,10 @@ public class CustomView extends View {
 
         canvas.drawColor(Color.BLACK);
 
-       /* if (currX + 160 < width && currX - 160 > 0) {
-            rect.left = currX + 160;
-            rect.right = currX - 160;
-        }else if(currX + 160 >= width)
-        {
-            rect.left = width;
-            rect.right = width - 160;
-        }else{
-            rect.left = 160;
-            rect.right = 0;
-        }*/
-
         slider.left = currX + 160;
         slider.right = currX - 160;
-        slider.top = currY - 180;
-        slider.bottom = currY - 220;
+        slider.top = currY - 220;
+        slider.bottom = currY - 260;
 
         canvas.drawRect(slider, paint);
 
@@ -128,16 +124,16 @@ public class CustomView extends View {
 
     }
 
-    public void move() {
-
-        Canvas canvas = new Canvas();
+    public void easyMove() {
 
         if ((ballY < (height - 100) && ((ballY > 200)) && (ballX < width) && (ballX > 0))) {
             ballY += speedY;
             ballX += speedX;
-            reCall();
+            easyCall();
         }
         if (hitsSlider()) {
+
+            sc.playSound(2);
 
             float rightDist = ballX - slider.right;
             float centerDist = ballX - slider.centerX();
@@ -150,32 +146,86 @@ public class CustomView extends View {
             ballY += speedY;
         }
         if (ballY < 200) {
-            speedY *= -1.0;
+            sc.playSound(1);
+            speedY *= -1.0F;
             ballY += speedY;
-            mainActivity.setScore();
+            speedUp++;
+            sc.setScore();
         }
         if (ballX <= 0 || ballX >= width) {
+
+            sc.playSound(1);
+
             speedX *= -1.0;
             ballX += speedX;
         }
         if (ballY > (height - 180)) {
+            sc.playSound(0);
             ballY = height / 2F;
             speedY = 0;
             setBallX();
             speedX = 0;
-            stopCall();
+            stopEasyCall();
+        }
+    }
+
+    public void moveHard() {
+
+        if ((ballY < (height - 100) && ((ballY > 200)) && (ballX < width) && (ballX > 0))) {
+            ballY += speedY;
+            ballX += speedX;
+            hardCall();
+        }
+        if (hitsSlider()) {
+
+            sc.playSound(2);
+
+            float rightDist = ballX - slider.right;
+            float centerDist = ballX - slider.centerX();
+
+            if (rightDist < centerDist) {
+                speedX *= -1.0;
+                ballX += speedX;
+            }
+            speedY *= -1.0;
+            ballY += speedY;
+        }
+        if (ballY < 200) {
+
+            sc.playSound(1);
+
+            speedY *= (speedUp % 5 == 0) ? -1.05 : -1.0;
+            ballY += speedY;
+            sc.setScore();
+        }
+        if (ballX <= 0 || ballX >= width) {
+
+            sc.playSound(1);
+
+            speedX *= -1.0;
+            ballX += speedX;
+        }
+        if (ballY > (height - 180)) {
+
+            sc.playSound(0);
+
+            ballY = height / 2F;
+            speedY = 0;
+            setBallX();
+            speedX = 0;
+            stopHardCall();
         }
     }
 
     boolean hitsSlider() {
         if (ballX < slider.left && ballX > slider.right) {
-            return (ballY >= height - 220 && ballY <= height - 180);
+            return (ballY >= height - 260 && ballY <= height - 220);
         }
         return false;
     }
 
-    void reCall() {
-        countDownTimer = new CountDownTimer(time, 5) {
+    void easyCall() {
+        easyTimer = new CountDownTimer(time, 5) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -183,15 +233,32 @@ public class CustomView extends View {
 
             @Override
             public void onFinish() {
-                Log.d(TAG, "Called");
                 invalidate();
-                move();
+                easyMove();
             }
         }.start();
     }
 
-    void stopCall() {
-        countDownTimer.cancel();
+    void stopEasyCall() {
+        easyTimer.cancel();
     }
 
+    void hardCall() {
+        hardTimer = new CountDownTimer(time, 5) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                invalidate();
+                moveHard();
+            }
+        }.start();
+    }
+
+    void stopHardCall() {
+        hardTimer.cancel();
+    }
 }
