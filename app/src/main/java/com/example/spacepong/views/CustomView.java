@@ -12,6 +12,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.spacepong.MainActivity;
+
 import java.util.Random;
 
 
@@ -27,7 +29,7 @@ public class CustomView extends View {
 
     CountDownTimer countDownTimer;
 
-    private final int  width = this.getResources().getDisplayMetrics().widthPixels;
+    private final int width = this.getResources().getDisplayMetrics().widthPixels;
     private final int height = this.getResources().getDisplayMetrics().heightPixels;
 
     private int currX = width / 2;
@@ -40,6 +42,8 @@ public class CustomView extends View {
     private float speedY = 0F;
 
     private long time = 10;
+    private int score = 0;
+    MainActivity mainActivity = new MainActivity();
 
 
     public CustomView(Context context) {
@@ -126,6 +130,8 @@ public class CustomView extends View {
 
     public void move() {
 
+        Canvas canvas = new Canvas();
+
         if ((ballY < (height - 100) && ((ballY > 200)) && (ballX < width) && (ballX > 0))) {
             ballY += speedY;
             ballX += speedX;
@@ -146,6 +152,7 @@ public class CustomView extends View {
         if (ballY < 200) {
             speedY *= -1.0;
             ballY += speedY;
+            mainActivity.setScore();
         }
         if (ballX <= 0 || ballX >= width) {
             speedX *= -1.0;
@@ -162,7 +169,7 @@ public class CustomView extends View {
 
     boolean hitsSlider() {
         if (ballX < slider.left && ballX > slider.right) {
-            return ballY >= height - 220;
+            return (ballY >= height - 220 && ballY <= height - 180);
         }
         return false;
     }
@@ -186,4 +193,5 @@ public class CustomView extends View {
     void stopCall() {
         countDownTimer.cancel();
     }
+
 }

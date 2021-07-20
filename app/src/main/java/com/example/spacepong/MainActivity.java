@@ -7,10 +7,13 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.spacepong.views.CustomView;
+
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,12 +21,14 @@ public class MainActivity extends AppCompatActivity {
 
     CustomView customView;
 
-    RelativeLayout rL;
+    FrameLayout rL;
     TextView scoreTitle;
     TextView scoreNo;
     TextView timer;
 
     CountDownTimer starttimer;
+
+    int score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +36,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate : MainActivity");
 
-        rL = (RelativeLayout) findViewById(R.id.layout);
+        score = 0;
+
+        rL = (FrameLayout) findViewById(R.id.layout);
         scoreTitle = (TextView) findViewById(R.id.scoreTitle);
         scoreNo = (TextView) findViewById(R.id.scoreNumber);
         timer = (TextView) findViewById(R.id.timer);
 
         scoreTitle.setVisibility(View.VISIBLE);
-        scoreTitle.setText("SCORE : ");
+        //scoreTitle.setText("SCORE : ");
         scoreNo.setVisibility(View.VISIBLE);
+        scoreNo.setText("00");
         timer.setVisibility(View.VISIBLE);
 
         customView = new CustomView(this);
@@ -64,25 +72,37 @@ public class MainActivity extends AppCompatActivity {
         rL.addView(customView);
     }
 
+    public void setScore() {
+        score += 2;
+        scoreNo.setText(("" + score));
+    }
+
     void startTimer() {
-         starttimer = new CountDownTimer(3000, 1000) {
+        starttimer = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) millisUntilFinished / 1000;
-                timer.setText((""+seconds));
+                timer.setText(("" + seconds));
             }
 
             @Override
             public void onFinish() {
                 customView.setSpeedY(20F);
-                customView.setSpeedX(20F);
+
+                double random = Math.random();
+
+                if (random > 0.50)
+                    customView.setSpeedX(20F);
+                else
+                    customView.setSpeedX(-20F);
+
+                timer.setVisibility(View.INVISIBLE);
                 stopTimer();
             }
         }.start();
     }
 
-    void stopTimer()
-    {
+    void stopTimer() {
         starttimer.cancel();
     }
 }
