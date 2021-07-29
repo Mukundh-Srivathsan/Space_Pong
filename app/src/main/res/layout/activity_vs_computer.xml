@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-    <com.example.spacepong.views.CustomView
+    <com.example.spacepong.computerView.VsComputerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.example.spacepong.views.CustomView>
+        android:layout_height="match_parent"></com.example.spacepong.computerView.VsComputerView>
 
     <TextView
-        android:id="@+id/scoreTitle"
+        android:id="@+id/computerScoreNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="top|right|right"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="162dp"
+        android:elevation="30dp"
         android:fontFamily="@font/audiowide"
-        android:text="SCORE"
-        android:textAlignment="viewEnd"
-        android:textAllCaps="true"
-        android:textColor="#FFFFFF"
-        android:textSize="48sp"
-        android:elevation="30dp"/>
+        android:text="00"
+        android:textColor="#F8F5F5"
+        android:textSize="48sp" />
 
     <TextView
-        android:id="@+id/scoreNumber"
+        android:id="@+id/userScoreNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="top|right|right"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="162dp"
+        android:layout_marginBottom="120dp"
         android:elevation="30dp"
         android:fontFamily="@font/audiowide"
         android:text="00"
@@ -40,14 +44,15 @@
         android:id="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="170dp"
-        android:layout_marginTop="107dp"
+        android:layout_marginTop="302dp"
+        android:elevation="30dp"
         android:fontFamily="@font/black_ops_one"
         android:text="3"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="#FFFFFF"
-        android:textSize="96sp"
-        android:elevation="30dp"/>
+        android:textSize="96sp" />
 
-</FrameLayout>
+</RelativeLayout>

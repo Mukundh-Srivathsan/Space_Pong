@@ -9,8 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpacePong">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".StartScreen">
+        <activity android:name=".computerView.VsComputerMode"></activity>
+        <activity
+            android:name=".GameOver"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".normalView.NormalMode"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".StartScreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
